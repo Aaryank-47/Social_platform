@@ -7,7 +7,7 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('',include('userauth.urls')),
+    path('',include('socialmedia.userauth.urls')),
 ]
 
 urlpatterns = urlpatterns+static(settings.MEDIA_URL,
