@@ -7,7 +7,7 @@ from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from userauth.models import LikePost
+from socialmedia.userauth.models import LikePost
 
 urlpatterns = [
     path('',views.home),
