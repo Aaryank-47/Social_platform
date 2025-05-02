@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/cb792c0850.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background-color: #fafafa;
+            padding: 20px;
+        }
+        .search-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .table {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        .search-box {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .search-box .input-group {
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 30px;
+            overflow: hidden;
+        }
+        .search-box .form-control {
+            border: none;
+            padding: 15px 20px;
+        }
+        .search-box .input-group-text {
+            background-color: #0095f6;
+            border: none;
+            color: white;
+            padding: 0 20px;
+        }
+        .search-box .input-group-text i {
+            font-size: 18px;
+        }
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-top: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        .suggestion-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+        .suggestion-item .user-info {
+            flex-grow: 1;
+        }
+        .suggestion-item .badge {
+            margin-left: 10px;
+        }
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="search-header">
+            <h1>Search Results for "{{ query }}"</h1>
+            <p class="text-muted">Found {{ users|length }} users and {{ posts|length }} posts</p>
+        </div>
+        
+        <!-- Search Box -->
+        <div class="search-box">
+            <form method="get" action="{% url 'search_results' %}" id="searchForm">
+                <div class="input-group">
+                    <input type="text" name="q" id="searchInput" placeholder="Search by name, email, or phone number" class="form-control"
+                        aria-label="Search" value="{{ query }}" autocomplete="off" />
+                    <span class="input-group-text">
+                        <button type="submit" class="btn btn-link text-white p-0">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </span>
+                </div>
+            </form>
+            <div class="suggestions-dropdown" id="suggestionsDropdown"></div>
+        </div>
+        
+        <!-- Connected Users Section -->
+        {% if connected_count > 0 %}
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h2 class="mb-0">Connected Users ({{ connected_count }})</h2>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            {% if forloop.counter <= connected_count %}
+                            <tr>
+                                <td><strong><a href="/profile/{{user.user.username}}">@{{user.user.username}}</a></strong></td>
+                                <td>{{user.user.email}}</td>
+                                <td>{{user.phone}}</td>
+                                <td><a href="/profile/{{user.user.username}}" class="btn btn-primary btn-sm">View Profile</a></td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Similar Users Section -->
+        {% if similar_count > 0 %}
+        <div class="card mb-4">
+            <div class="card-header bg-warning text-dark">
+                <h2 class="mb-0">Similar Users ({{ similar_count }})</h2>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            {% if forloop.counter > connected_count and forloop.counter <= connected_count|add:similar_count %}
+                            <tr>
+                                <td><strong><a href="/profile/{{user.user.username}}">@{{user.user.username}}</a></strong></td>
+                                <td>{{user.user.email}}</td>
+                                <td>{{user.phone}}</td>
+                                <td><a href="/profile/{{user.user.username}}" class="btn btn-primary btn-sm">View Profile</a></td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- Other Users Section -->
+        {% if other_count > 0 %}
+        <div class="card mb-4">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Other Users ({{ other_count }})</h2>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                            {% if forloop.counter > connected_count|add:similar_count %}
+                            <tr>
+                                <td><strong><a href="/profile/{{user.user.username}}">@{{user.user.username}}</a></strong></td>
+                                <td>{{user.user.email}}</td>
+                                <td>{{user.phone}}</td>
+                                <td><a href="/profile/{{user.user.username}}" class="btn btn-primary btn-sm">View Profile</a></td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        {% endif %}
+        
+        <!-- No Users Found Message -->
+        {% if users|length == 0 %}
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="alert alert-info">No users found matching your search.</div>
+            </div>
+        </div>
+        {% endif %}
+        
+        {% if posts %}
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Posts</h2>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for post in posts %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            <img src="{{ post.image.url }}" class="card-img-top" alt="Post image">
+                            <div class="card-body">
+                                <p class="card-text">{{ post.caption }}</p>
+                                <p class="card-text"><small class="text-muted">Posted by @{{ post.user }}</small></p>
+                                <a href="/profile/{{post.user}}" class="btn btn-primary btn-sm">View Profile</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            const suggestionsDropdown = document.getElementById('suggestionsDropdown');
+            let debounceTimer;
+
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                const query = this.value.trim();
+                
+                if (query.length >= 2) {
+                    debounceTimer = setTimeout(() => {
+                        fetchSuggestions(query);
+                    }, 300);
+                } else {
+                    suggestionsDropdown.style.display = 'none';
+                }
+            });
+
+            function fetchSuggestions(query) {
+                fetch(`/search-suggestions/?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        displaySuggestions(data.suggestions);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching suggestions:', error);
+                    });
+            }
+
+            function displaySuggestions(suggestions) {
+                if (suggestions.length === 0) {
+                    suggestionsDropdown.style.display = 'none';
+                    return;
+                }
+
+                const html = suggestions.map(suggestion => `
+                    <div class="suggestion-item" onclick="window.location.href='/profile/${suggestion.username}'">
+                        <div class="user-info">
+                            <strong>@${suggestion.username}</strong>
+                            <div class="text-muted small">
+                                ${suggestion.email} | ${suggestion.phone}
+                            </div>
+                        </div>
+                        ${suggestion.is_connected ? '<span class="badge bg-success">Connected</span>' : 
+                          suggestion.is_similar ? '<span class="badge bg-warning">Similar</span>' : ''}
+                    </div>
+                `).join('');
+
+                suggestionsDropdown.innerHTML = html;
+                suggestionsDropdown.style.display = 'block';
+            }
+
+            // Close suggestions when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!searchInput.contains(event.target) && !suggestionsDropdown.contains(event.target)) {
+                    suggestionsDropdown.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+                

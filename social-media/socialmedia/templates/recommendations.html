@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Recommendations</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/cb792c0850.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body style="background-color: #fafafa;">
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-2 d-none d-md-block" style="position: fixed; background-color: #ffffff; height: 100vh; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding-top: 20px;">
+                <div style="text-align: center; margin-top: 15px;">
+                    <img src="{{profile.profileimg.url}}" alt="Profile Picture" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid #e0e0e0;">
+                    <h4 style="margin-top: 15px;"><a href="/profile/{{user}}" style="text-decoration: none; color: #262626; font-weight: 500;">@{{user}}</a></h4>
+                </div>
+                <ul style="list-style: none; padding: 0; margin-top: 30px;">
+                    <li style="padding: 10px 15px;">
+                        <a href="/" style="text-decoration: none; color: #262626; display: flex; align-items: center;">
+                            <i class="fa-solid fa-house" style="margin-right: 10px; width: 20px;"></i> Home
+                        </a>
+                    </li>
+                    <li style="padding: 10px 15px;">
+                        <a href="/explore" style="text-decoration: none; color: #262626; display: flex; align-items: center;">
+                            <i class="fa-solid fa-compass" style="margin-right: 10px; width: 20px;"></i> Explore
+                        </a>
+                    </li>
+                    <li style="padding: 10px 15px;">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal3" style="text-decoration: none; color: #262626; display: flex; align-items: center;">
+                            <i class="fa-solid fa-magnifying-glass" style="margin-right: 10px; width: 20px;"></i> Search
+                        </a>
+                    </li>
+                    <li style="padding: 10px 15px;">
+                        <a href="#" data-bs-toggle="modal" data-bs-target="#exampleModal2" style="text-decoration: none; color: #262626; display: flex; align-items: center;">
+                            <i class="fa-solid fa-circle-plus" style="margin-right: 10px; width: 20px;"></i> Create Post
+                        </a>
+                    </li>
+                    <li style="padding: 10px 15px;">
+                        <a href="/profile/{{user}}" style="text-decoration: none; color: #262626; display: flex; align-items: center;">
+                            <i class="fa-solid fa-user" style="margin-right: 10px; width: 20px;"></i> Profile
+                        </a>
+                    </li>
+                    <li style="padding: 10px 15px;">
+                        <a href="/logoutt" style="text-decoration: none; color: #262626; display: flex; align-items: center;">
+                            <i class="fa-solid fa-right-from-bracket" style="margin-right: 10px; width: 20px;"></i> Logout
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+
+            <!-- Main Content -->
+            <main style="margin-left: 16.666667%; width: 83.333333%; padding: 20px;">
+                <div style="max-width: 935px; margin: 0 auto;">
+                    <div style="background: white; border: 1px solid #dbdbdb; border-radius: 8px; margin-bottom: 30px; padding: 20px;">
+                        <h2 style="margin-bottom: 20px;">Recommended Users</h2>
+                        
+                        {% if recommended_profiles %}
+                            <div class="row">
+                                {% for profile in recommended_profiles %}
+                                    <div class="col-md-4 mb-4">
+                                        <div style="background: white; border: 1px solid #dbdbdb; border-radius: 8px; padding: 15px;">
+                                            <div style="display: flex; align-items: center; margin-bottom: 15px;">
+                                                <img src="{{profile.profileimg.url}}" alt="{{profile.user.username}}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; margin-right: 15px;">
+                                                <div>
+                                                    <h5 style="margin: 0;"><a href="/profile/{{profile.user.username}}" style="text-decoration: none; color: #262626;">@{{profile.user.username}}</a></h5>
+                                                    <p style="margin: 5px 0 0 0; color: #8e8e8e; font-size: 14px;">{{profile.user.get_full_name}}</p>
+                                                </div>
+                                            </div>
+                                            <form action="/connect" method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="user" value="{{profile.user.username}}">
+                                                <button type="submit" class="btn btn-primary w-100">Connect</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div style="text-align: center; padding: 30px;">
+                                <p style="color: #8e8e8e; margin-bottom: 20px;">No recommendations available at the moment.</p>
+                                <a href="/explore" class="btn btn-primary">Explore More Users</a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="{% static 'js/app.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

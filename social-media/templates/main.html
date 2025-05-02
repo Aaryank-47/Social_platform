@@ -1,0 +1,31 @@
+<div class="post-card" id="{{post.id}}" style="border: none;">
+    <div class="post-header">
+        {% if post.user.profile.profileimg and 'blank-profile-picture.png' not in post.user.profile.profileimg.url %}
+            <img src="{{ post.user.profile.profileimg.url }}" alt="Profile Picture" class="post-user-pic">
+        {% else %}
+            <div class="post-user-pic d-flex align-items-center justify-content-center bg-light" style="width:32px;height:32px;border-radius:50%;">
+                <i class="fa-solid fa-user text-secondary"></i>
+            </div>
+        {% endif %}
+        <a href="/profile/{{post.user}}" class="post-user-name">@{{post.user}}</a>
+        
+        {# Add three-dots menu for owner #}
+        {% if post.user == request.user.username %}
+        <div class="ms-auto dropdown">
+            <button class="btn btn-link text-secondary" type="button" id="postOptions{{post.id}}" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 0; border: none; background: transparent;">
+                <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postOptions{{post.id}}">
+                <li>
+                    <a class="dropdown-item text-danger" href="/delete/{{post.id}}" onclick="return confirm('Are you sure you want to delete this post?');">
+                        Delete Post
+                    </a>
+                </li>
+                {# Add other options like Edit later if needed #}
+            </ul>
+        </div>
+        {% endif %}
+        {# End three-dots menu #}
+    </div>
+    // ... existing code ...
+</div> 

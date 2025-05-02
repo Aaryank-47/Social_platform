@@ -1,0 +1,138 @@
+{% load static %}
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; background-color: #ffffff; box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);">
+            <div class="modal-header border-0 pb-0" style="padding: 16px 24px;">
+                <div class="w-100 d-flex justify-content-between align-items-center">
+                    <button type="button" class="btn-close opacity-75" data-bs-dismiss="modal" aria-label="Close" style="border: none; background: transparent;"></button>
+                    <h1 class="modal-title fs-5 fw-bold text-center text-dark" style="font-size: 24px; flex-grow: 1;">Edit Profile</h1>
+                </div>
+            </div>
+            <div class="modal-body pt-0 px-4" style="padding: 16px 24px;">
+
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-4 text-center">
+                        <div class="position-relative d-inline-block">
+                            <label for="profile-image-upload" class="cursor-pointer">
+                                <div class="rounded-circle overflow-hidden profile-picture-container"
+                                     style="width: 120px; height: 120px; background-color: #f1f3f5; transition: transform 0.3s ease, box-shadow 0.3s ease; transform: scale(1); box-shadow: 0px 6px 18px rgba(0, 0, 0, 0.15);">
+                                    {% if user_profile.image %}
+                                        <img src="{{ user_profile.image.url }}" alt="Profile" 
+                                             class="w-100 h-100 object-fit-cover profile-image">
+                                    {% else %}
+                                        <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-light">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" 
+                                                 fill="#adb5bd" class="bi bi-person" viewBox="0 0 16 16">
+                                                <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Z"/>
+                                            </svg>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                <div class="position-absolute bottom-0 end-0 camera-icon-container"
+                                     style="transform: translate(10%, 10%); transition: transform 0.3s ease;">
+                                    <div class="bg-white rounded-circle p-2 d-flex align-items-center justify-content-center shadow-sm"
+                                         style="width: 36px; height: 36px;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="#0d6efd" 
+                                             class="bi bi-camera" viewBox="0 0 16 16">
+                                            <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1v6zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4H2z"/>
+                                        </svg>
+                                    </div>
+                                </div>
+                            </label>
+                            <input type="file" name="image" class="d-none" id="profile-image-upload" accept="image/*">
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="bio-input" class="form-label small text-muted mb-2 fw-medium">BIO</label>
+                        <textarea class="form-control rounded-3 px-3 py-2 border border-1 border-light-subtle focus-effect" 
+                                  name="bio" id="bio-input" rows="3" 
+                                  placeholder="Tell your story..." style="font-size: 14px; border-radius: 8px; border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15); transition: all 0.3s ease;"></textarea>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label for="location-input" class="form-label small text-muted mb-2 fw-medium">LOCATION</label>
+                        <input type="text" class="form-control rounded-3 px-3 py-2 border border-1 border-light-subtle focus-effect" 
+                               name="location" id="location-input" value="{{user_profile.location}}" 
+                               placeholder="City, Country" style="font-size: 14px; border-radius: 8px; border-color: #86b7fe; box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15); transition: all 0.3s ease;">
+                    </div>
+
+                    <div class="modal-footer border-0 pt-2 pb-4 px-0" style="padding: 16px 24px;">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4 py-1 cancel-btn" 
+                                data-bs-dismiss="modal" style="background-color: #f1f3f5; border: none; color: #495057; transition: background-color 0.3s ease;">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary rounded-pill px-4 py-1 fw-medium save-btn" 
+                                style="background: linear-gradient(to right, #0d6efd, #0b5ed7); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} {% load static %}
+<div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Profile</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <form  method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <img src="{% static 'css/upload.png' %}" alt="" class="m-1">
+                        
+                        <label for="recipient-name" class="col-form-label">Photo</label>
+                        <input type="file" name="image" class="form-control" id="recipient-name">
+
+                    </div>
+                    <div class="mb-3">
+                        <label for="message-text" class="col-form-label">Bio</label>
+                        <textarea class="form-control" name="bio" placeholder="Bio..."
+                            id="message-text">{{user_profile.bio}}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="recipient-name" class="col-form-label">Location</label>
+                        <input type="text" class="form-control" name="location" id="recipient-name" value="{{user_profile.location}}">
+                    </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div> {% endcomment %}

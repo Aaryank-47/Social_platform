@@ -1,0 +1,229 @@
+{% load static %}
+<!-- Create Post Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="exampleModalLabel">Create New Post</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form action="/upload" method="POST" enctype="multipart/form-data" id="createPostForm">
+                {% csrf_token %}
+                <div class="modal-body pt-2">
+                    <div class="row g-0">
+                        <!-- Image Preview Section -->
+                        <div class="col-md-7">
+                            <div class="image-upload-container border rounded-start d-flex align-items-center justify-content-center" style="height: 500px; background-color: #f8f9fa;">
+                                <div class="text-center" id="uploadPrompt">
+                                    <div class="upload-icon mb-3">
+                                        <i class="fas fa-cloud-upload-alt fa-3x text-primary"></i>
+                                    </div>
+                                    <h6 class="text-dark fw-bold">Drag and drop your image here</h6>
+                                    <p class="text-muted small mb-3">or</p>
+                                    <label for="image_upload" class="btn btn-primary btn-sm px-4 py-2">
+                                        Select from computer
+                                    </label>
+                                </div>
+                                <img id="imagePreview" src="" alt="Preview" style="max-width: 100%; max-height: 100%; display: none; object-fit: contain;">
+                                <input type="file" name="image_upload" id="image_upload" accept="image/*" class="d-none" required>
+                            </div>
+                        </div>
+                        
+                        <!-- Caption Section -->
+                        <div class="col-md-5">
+                            <div class="caption-container h-100 border-start">
+                                <div class="p-4">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img src="{{profile.profileimg.url}}" alt="Profile Picture" class="rounded-circle me-2" style="width: 36px; height: 36px; object-fit: cover; border: 1px solid #dee2e6;">
+                                        <span class="fw-bold">{{user}}</span>
+                                    </div>
+                                    <textarea class="form-control caption-textarea" name="caption" rows="8" placeholder="Write a caption..." style="resize: none; border: none; box-shadow: none;" required></textarea>
+                                </div>
+                                
+                                <!-- Additional Options -->
+                                <div class="border-top p-4">
+                                    <h6 class="mb-3 text-dark fw-bold">Post Settings</h6>
+                                    <div class="form-check mb-3">
+                                        <input class="form-check-input" type="checkbox" id="allowComments" checked>
+                                        <label class="form-check-label" for="allowComments">
+                                            Allow comments
+                                        </label>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="allowLikes" checked>
+                                        <label class="form-check-label" for="allowLikes">
+                                            Allow likes
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary px-4" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-4" id="shareButton" disabled>Share</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<style>
+.image-upload-container {
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border-right: none !important;
+}
+
+.image-upload-container:hover {
+    background-color: #eef0f2 !important;
+}
+
+.upload-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background-color: rgba(0, 149, 246, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.modal-content {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.modal-dialog {
+    max-width: 900px;
+}
+
+.caption-textarea {
+    font-size: 0.95rem;
+    padding: 0;
+    min-height: 200px;
+}
+
+.caption-textarea:focus {
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+.btn-primary {
+    background-color: #0095f6;
+    border-color: #0095f6;
+    font-weight: 600;
+}
+
+.btn-primary:hover {
+    background-color: #0086db;
+    border-color: #0086db;
+}
+
+.btn-primary:disabled {
+    background-color: #b2dffc;
+    border-color: #b2dffc;
+}
+
+.btn-outline-secondary {
+    font-weight: 600;
+}
+
+.form-check-input:checked {
+    background-color: #0095f6;
+    border-color: #0095f6;
+}
+
+.caption-container {
+    background-color: white;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+@media (max-width: 767.98px) {
+    .image-upload-container {
+        height: 300px !important;
+    }
+    
+    .caption-container {
+        height: auto;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageUpload = document.getElementById('image_upload');
+    const imagePreview = document.getElementById('imagePreview');
+    const uploadPrompt = document.getElementById('uploadPrompt');
+    const shareButton = document.getElementById('shareButton');
+    const uploadContainer = document.querySelector('.image-upload-container');
+
+    // Handle file selection
+    imageUpload.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                uploadPrompt.style.display = 'none';
+                shareButton.disabled = false;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Handle drag and drop
+    uploadContainer.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        this.style.backgroundColor = '#eef0f2';
+    });
+
+    uploadContainer.addEventListener('dragleave', function(e) {
+        e.preventDefault();
+        this.style.backgroundColor = '#f8f9fa';
+    });
+
+    uploadContainer.addEventListener('drop', function(e) {
+        e.preventDefault();
+        this.style.backgroundColor = '#f8f9fa';
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith('image/')) {
+            imageUpload.files = e.dataTransfer.files;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                imagePreview.src = e.target.result;
+                imagePreview.style.display = 'block';
+                uploadPrompt.style.display = 'none';
+                shareButton.disabled = false;
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Handle click on container
+    uploadContainer.addEventListener('click', function() {
+        imageUpload.click();
+    });
+
+    // Reset modal on close
+    document.getElementById('exampleModal').addEventListener('hidden.bs.modal', function () {
+        document.getElementById('createPostForm').reset();
+        imagePreview.style.display = 'none';
+        uploadPrompt.style.display = 'block';
+        shareButton.disabled = true;
+        uploadContainer.style.backgroundColor = '#f8f9fa';
+    });
+});
+</script>

@@ -1,0 +1,1508 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://kit.fontawesome.com/cb792c0850.js" crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <title>Profile - Social Media</title>
+    <link rel="stylesheet" href="{% static 'css/app.css' %}">
+    <style>
+        :root {
+            --instagram-blue: #0095f6;
+            --instagram-blue-hover: #0086db;
+            --instagram-light-blue: #b2dffc;
+            --instagram-gray: #8e8e8e;
+            --instagram-light-gray: #fafafa;
+            --instagram-border: #dbdbdb;
+        }
+
+        body {
+            background-color: #fafafa;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            background-color: white;
+            height: 100vh;
+            position: fixed;
+            width: 240px;
+            border-right: 1px solid var(--instagram-border);
+            padding: 0;
+            z-index: 1000;
+        }
+
+        .sidebar-header {
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 1px solid var(--instagram-border);
+        }
+
+        .profile-pic {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--instagram-border);
+        }
+
+        .sidebar-nav {
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            margin-bottom: 5px;
+        }
+
+        .nav-link {
+            color: #262626;
+            padding: 12px 24px;
+            border-radius: 8px;
+            margin: 0 12px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: #262626;
+        }
+
+        .nav-link i {
+            width: 24px;
+            text-align: center;
+            margin-right: 12px;
+            font-size: 1.2rem;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 240px;
+            padding: 30px 0;
+            max-width: 935px;
+            margin: 0 auto 0 240px;
+        }
+
+        /* Profile Header Styles */
+        .profile-header {
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid var(--instagram-border);
+            padding: 30px;
+            margin-bottom: 24px;
+        }
+
+        .profile-header-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .profile-pic-large {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--instagram-border);
+        }
+
+        .profile-stats {
+            display: flex;
+            margin: 20px 0;
+        }
+
+        .stat-item {
+            margin-right: 40px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .stat-label {
+            color: var(--instagram-gray);
+            font-size: 0.9rem;
+        }
+
+        .profile-info {
+            margin-left: 30px;
+            flex: 1;
+        }
+
+        .profile-username {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 5px;
+        }
+
+        .profile-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .profile-bio {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .profile-bio h6 {
+            color: #262626;
+            font-weight: 600;
+        }
+
+        .profile-bio p {
+            margin-bottom: 0;
+            white-space: pre-line;
+        }
+
+        .profile-location {
+            color: var(--instagram-gray);
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .edit-profile-btn {
+            background-color: #f8f9fa;
+            color: #262626;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .edit-profile-btn:hover {
+            background-color: #e9ecef;
+            color: #262626;
+        }
+
+        .edit-profile-btn i {
+            font-size: 14px;
+        }
+
+        .connect-btn {
+            background-color: var(--instagram-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 7px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .connect-btn:hover {
+            background-color: var(--instagram-blue-hover);
+        }
+
+        .btn-primary {
+            background-color: var(--instagram-blue);
+            border-color: var(--instagram-blue);
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--instagram-blue-hover);
+            border-color: var(--instagram-blue-hover);
+        }
+
+        .btn-outline-secondary {
+            font-weight: 600;
+        }
+
+        /* Profile Tabs */
+        .profile-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--instagram-border);
+            margin-bottom: 20px;
+        }
+
+        .profile-tab {
+            padding: 15px 0;
+            margin-right: 60px;
+            font-weight: 600;
+            color: var(--instagram-gray);
+            border-bottom: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .profile-tab.active {
+            color: #262626;
+            border-bottom: 1px solid #262626;
+        }
+
+        .profile-tab i {
+            margin-right: 6px;
+        }
+
+        /* Post Card Styles */
+        .post-card {
+            background: white;
+            border: 1px solid var(--instagram-border);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            width: 300px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .post-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--instagram-border);
+        }
+
+        .post-user-pic {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+            background-color: #f8f9fa;
+        }
+
+        .post-user-default {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 10px;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .post-username {
+            font-weight: 600;
+            color: #262626;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .post-image-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background-color: #fafafa;
+            flex-shrink: 0;
+            overflow: hidden;
+        }
+
+        .post-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .post-actions {
+            display: flex;
+            padding: 8px 16px;
+            align-items: center;
+            border-top: 1px solid var(--instagram-border);
+        }
+
+        .post-action-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            margin-right: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: #262626;
+            transition: transform 0.2s ease;
+        }
+
+        .post-action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .post-action-btn i {
+            font-size: 24px;
+        }
+
+        .post-action-btn.liked i {
+            color: #ed4956;
+        }
+
+        .post-save-btn {
+            margin-left: auto;
+            margin-right: 0;
+        }
+
+        .post-content {
+            padding: 0 16px 16px;
+            flex-shrink: 0;
+        }
+
+        .post-likes {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #262626;
+        }
+
+        .post-caption {
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: #262626;
+            line-height: 1.4;
+        }
+
+        .post-caption strong {
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .post-comments {
+            font-size: 14px;
+            color: #8e8e8e;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .post-comments:hover {
+            color: #262626;
+        }
+
+        .post-timestamp {
+            color: #8e8e8e;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.2px;
+        }
+
+        /* Dropdown menu styles */
+        .dropdown-menu {
+            border-radius: 8px;
+            border: 1px solid var(--instagram-border);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 8px 0;
+        }
+
+        .dropdown-item {
+            padding: 8px 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Profile Posts Grid */
+        .profile-posts {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 0 20px;
+            justify-content: flex-start;
+            flex-wrap: wrap;
+        }
+
+        .profile-posts>* {
+            flex: 0 0 calc(33.333% - 10px);
+            /* 3 items per row with gap adjustment */
+            box-sizing: border-box;
+        }
+
+
+        .profile-post-item {
+            position: relative;
+            aspect-ratio: 1/1;
+            overflow: hidden;
+            cursor: pointer;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+
+        .profile-post-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-post-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .profile-post-item:hover .profile-post-overlay {
+            opacity: 1;
+        }
+
+        .profile-post-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .profile-post-stat {
+            display: flex;
+            align-items: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .profile-post-stat i {
+            margin-right: 6px;
+            font-size: 18px;
+        }
+
+        /* Connections Modal */
+        .connections-modal .modal-content {
+            border-radius: 8px;
+            border: none;
+        }
+
+        .connections-modal .modal-header {
+            border-bottom: 1px solid var(--instagram-border);
+            padding: 15px 20px;
+        }
+
+        .connections-modal .modal-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+
+        .connections-modal .modal-body {
+            padding: 20px;
+        }
+
+        .connections-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .connection-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--instagram-border);
+        }
+
+        .connection-item:last-child {
+            border-bottom: none;
+        }
+
+        .connection-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+
+        .connection-info {
+            flex: 1;
+        }
+
+        .connection-username {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .connection-name {
+            color: var(--instagram-gray);
+            font-size: 0.9rem;
+        }
+
+        .connection-action {
+            margin-left: 10px;
+        }
+
+        .add-connection-btn {
+            background-color: var(--instagram-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .add-connection-btn:hover {
+            background-color: var(--instagram-blue-hover);
+        }
+
+        .add-connection-btn.connected {
+            background-color: #e4e6eb;
+            color: #050505;
+        }
+
+        .add-connection-btn.connected:hover {
+            background-color: #d8dadf;
+        }
+
+        /* Connection Sections */
+        .connection-section {
+            margin-bottom: 20px;
+        }
+
+        .connection-section-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--instagram-border);
+        }
+
+        .add-connection-footer {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--instagram-border);
+        }
+
+        .add-connection-btn-large {
+            display: flex;
+            align-items: center;
+            background-color: var(--instagram-blue);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 15px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .add-connection-btn-large i {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+
+        .add-connection-btn-large:hover {
+            background-color: var(--instagram-blue-hover);
+        }
+
+        /* Vertical Sections Layout */
+        .connections-container {
+            display: flex;
+            gap: 20px;
+            position: relative;
+        }
+
+        .connection-section {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .connection-section-title {
+            text-align: center;
+        }
+
+        .connections-list {
+            max-height: 350px;
+        }
+
+        /* Vertical Divider */
+        .vertical-divider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 1px;
+            background-color: var(--instagram-border);
+            transform: translateX(-50%);
+        }
+
+        /* Edit Profile Form */
+        .edit-profile-form {
+            background-color: white;
+            border-radius: 8px;
+            border: 1px solid var(--instagram-border);
+            padding: 30px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            border-radius: 4px;
+            border: 1px solid var(--instagram-border);
+        }
+
+        .form-control:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 72px;
+            }
+
+            .sidebar-header h4,
+            .nav-link span {
+                display: none;
+            }
+
+            .nav-link {
+                padding: 12px;
+                text-align: center;
+            }
+
+            .nav-link i {
+                margin-right: 0;
+                font-size: 1.5rem;
+            }
+
+            .main-content {
+                margin-left: 72px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .profile-header-row {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .profile-info {
+                margin-left: 0;
+                margin-top: 20px;
+            }
+
+            .profile-stats {
+                justify-content: center;
+            }
+
+            .profile-actions {
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: fixed;
+                bottom: 0;
+                top: auto;
+                border-top: 1px solid var(--instagram-border);
+                border-right: none;
+            }
+
+            .sidebar-header {
+                display: none;
+            }
+
+            .sidebar-nav {
+                display: flex;
+                justify-content: space-around;
+                padding: 10px 0;
+            }
+
+            .nav-item {
+                margin: 0;
+            }
+
+            .nav-link {
+                padding: 8px;
+                margin: 0;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-bottom: 60px;
+                padding: 10px 0;
+            }
+
+            .profile-header {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+
+            .profile-posts {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .connections-container {
+                flex-direction: column;
+            }
+
+            .connection-section {
+                margin-bottom: 20px;
+            }
+
+            .vertical-divider {
+                display: none;
+            }
+        }
+
+        /* Modal Close Button */
+        .btn-close {
+            border: none;
+            background: transparent;
+            padding: 0.5rem;
+            margin: -0.5rem -0.5rem -0.5rem auto;
+            transition: none;
+            font-size: 1.25rem;
+            color: #262626;
+            opacity: 0.7;
+        }
+
+        .btn-close:focus {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+            color: #262626;
+        }
+
+        .btn-close::before {
+            content: "×";
+            font-weight: bold;
+        }
+
+        /* Add the same styles as in search_user.html */
+        .suggestions-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-top: 5px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .suggestion-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .suggestion-item .user-info {
+            flex-grow: 1;
+        }
+
+        .suggestion-item .badge {
+            margin-left: 10px;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .connections-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .connection-item:hover {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .connection-info {
+            flex: 1;
+        }
+
+        .nav-tabs {
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .nav-tabs .nav-link {
+            color: #495057;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin-right: 1rem;
+        }
+
+        .nav-tabs .nav-link:hover {
+            border: none;
+            color: #0095f6;
+        }
+
+        .nav-tabs .nav-link.active {
+            color: #0095f6;
+            border: none;
+            border-bottom: 2px solid #0095f6;
+            font-weight: 600;
+        }
+
+        .profile-header-pro {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.09);
+            padding: 40px 32px 32px 32px;
+            margin-bottom: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 540px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+        }
+
+        .profile-pic-wrap {
+            margin-bottom: 12px;
+        }
+
+        .profile-pic-pro,
+        .default-pic {
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #e9ecef;
+            background: #f4f6fb;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-username-pro {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #222;
+            margin-bottom: 4px;
+        }
+
+        .profile-location-pro {
+            color: #888;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .profile-stats-pro {
+            gap: 40px;
+        }
+
+        .stat-item-pro {
+            text-align: center;
+        }
+
+        .stat-value-pro {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #0d6efd;
+        }
+
+        .stat-label-pro {
+            color: #888;
+            font-size: 1rem;
+            margin-top: 2px;
+        }
+
+        .profile-actions-pro {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .edit-profile-btn-pro,
+        .connect-btn-pro {
+            background: linear-gradient(90deg, #0d6efd 60%, #0b5ed7 100%);
+            color: #fff;
+            border: none;
+            border-radius: 24px;
+            padding: 10px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(13, 110, 253, 0.08);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .edit-profile-btn-pro:hover,
+        .connect-btn-pro:hover {
+            background: linear-gradient(90deg, #0b5ed7 60%, #0d6efd 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(13, 110, 253, 0.12);
+        }
+
+        .profile-bio-pro {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 18px 22px;
+            color: #444;
+            font-size: 1.05rem;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+            width: 100%;
+            text-align: left;
+        }
+
+        @media (max-width: 600px) {
+            .profile-header-pro {
+                padding: 18px 4px 18px 4px;
+            }
+
+            .profile-pic-pro,
+            .default-pic {
+                width: 80px;
+                height: 80px;
+            }
+
+            .profile-username-pro {
+                font-size: 1.2rem;
+            }
+        }
+
+        .profile-header-pro-horizontal {
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.09);
+            padding: 40px 32px 32px 32px;
+            margin-bottom: 32px;
+            display: flex;
+            align-items: center;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            flex-direction: row;
+            gap: 32px;
+        }
+
+        .profile-pic-wrap {
+            margin-bottom: 0;
+        }
+
+        .profile-info-pro {
+            text-align: left;
+        }
+
+        @media (max-width: 900px) {
+            .profile-header-pro-horizontal {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .profile-info-pro {
+                text-align: center;
+            }
+
+            .profile-pic-wrap {
+                margin-bottom: 12px;
+            }
+        }
+
+        .btn-link[aria-expanded][id^="postOptions"] {
+            border: none !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid p-0">
+        <div class="row g-0">
+            <!-- Sidebar -->
+            <div class="col-md-2">
+                <div class="sidebar">
+                    <div class="sidebar-header">
+                        <img src="{{profile.profileimg.url}}" alt="Profile Picture" class="profile-pic">
+                        <h4 class="mt-2"><a href="/profile/{{user}}"
+                                style="text-decoration:none; color: #262626;">@{{user}}</a></h4>
+                    </div>
+                    <div class="sidebar-nav">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" href="/">
+                                    <i class="fa-solid fa-house"></i> <span>Home</span>
+                                </a>
+                            </li>
+                            <!-- <li class="nav-item">
+                                <a class="nav-link" href="/explore">
+                                    <i class="fa-solid fa-compass"></i> <span>Explore</span>
+                                </a>
+                            </li> -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal3">
+                                    <i class="fa-solid fa-magnifying-glass"></i> <span>Search</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    <i class="fa-solid fa-circle-plus"></i> <span>Create Post</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="/profile/{{user}}">
+                                    <i class="fa-solid fa-user"></i> <span>Profile</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="/logoutt">
+                                    <i class="fa-solid fa-right-from-bracket"></i> <span>Logout</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-10">
+                <div class="main-content">
+                    {% include "modal.html" %}
+                    {% include "search.html" %}
+
+                    <!-- Profile Header -->
+                    <div class="profile-header-pro-horizontal d-flex align-items-center justify-content-center">
+                        <div class="profile-pic-wrap me-4">
+                            {% if user_profile.profileimg %}
+                            <img src="{{ user_profile.profileimg.url }}" class="profile-pic-pro" alt="Profile Picture">
+                            {% else %}
+                            <div class="profile-pic-pro default-pic d-flex align-items-center justify-content-center">
+                                <i class="fa-solid fa-user fa-3x text-secondary"></i>
+                            </div>
+                            {% endif %}
+                        </div>
+                        <div class="profile-info-pro flex-grow-1">
+                            <div class="d-flex align-items-center mb-2">
+                                <div class="profile-username-pro me-3">@{{ user_object.username }}</div>
+                                {% if user.username == user_object.username %}
+                                <button type="button" class="edit-profile-btn-pro ms-2" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal1">
+                                    <i class="fa-solid fa-pen-to-square me-2"></i>Edit Profile
+                                </button>
+                                {% else %}
+                                <form action="/connect" method="POST" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="user" value="{{user_object.username}}">
+                                    <button type="submit" class="connect-btn-pro">{{follow_unfollow}}</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                            {% if user_profile.location %}
+                            <div class="profile-location-pro mb-2"><i class="fa-solid fa-location-dot"></i>
+                                {{user_profile.location }}</div>
+                            {% endif %}
+                            <div class="profile-stats-pro d-flex gap-4 mb-2">
+                                <div class="stat-item-pro">
+                                    <div class="stat-value-pro">{{ user_post_length }}</div>
+                                    <div class="stat-label-pro"><i class="fa-solid fa-image"></i> Posts</div>
+                                </div>
+                                <div class="stat-item-pro" data-bs-toggle="modal" data-bs-target="#connectionsModal"
+                                    style="cursor:pointer;">
+                                    <div class="stat-value-pro">{{ user_followers }}</div>
+                                    <div class="stat-label-pro"><i class="fa-solid fa-user-group"></i> Connections</div>
+                                </div>
+                            </div>
+                            {% if user.username == user_object.username and user_profile.bio %}
+                            <div class="profile-bio-pro mt-2">
+                                <h6>About Me</h6>
+                                <p>{{ user_profile.bio }}</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Profile Tabs -->
+                    <div class="profile-tabs">
+                        <div class="profile-tab active">
+                            <i class="fa-solid fa-table-cells"></i> POSTS
+                        </div>
+                        <div class="profile-tab">
+                            <i class="fa-solid fa-bookmark"></i> SAVED
+                        </div>
+                    </div>
+
+                    <!-- Profile Posts Grid -->
+                    <div class="profile-posts">
+                        {% for post in user_posts %}
+                        <div class="post-card">
+                            <!-- Post Header with Profile Info and Menu -->
+                            <div class="post-header d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    {% if user_profile.profileimg %}
+                                    <img src="{{user_profile.profileimg.url}}" alt="Profile Picture" class="post-user-pic">
+                                    {% else %}
+                                    <div class="post-user-default d-flex align-items-center justify-content-center">
+                                        <i class="fa-solid fa-user"></i>
+                                    </div>
+                                    {% endif %}
+                                    <a href="/profile/{{post.user.user.username}}"
+                                        class="post-username">@{{ user_object.username }}</a>
+                                </div>
+
+                                <!-- Three-dot menu button (borderless) -->
+                                <div class="dropdown">
+                                    <button class="btn btn-link text-secondary" type="button" id="postOptions{{post.id}}" data-bs-toggle="dropdown" aria-expanded="false" style="padding: 0; border: none; background: transparent;">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="postOptions{{post.id}}">
+                                        {% if user.username == post.user.user.username %}
+                                        <li><a class="dropdown-item text-danger" href="/delete/{{post.id}}"><i class="fas fa-trash me-2"></i>Delete</a></li>
+                                        {% else %}
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-flag me-2"></i>Report</a>
+                                        </li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-ban me-2"></i>Block
+                                                User</a></li>
+                                        {% endif %}
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-bookmark me-2"></i>Save
+                                                Post</a></li>
+                                        <li><a class="dropdown-item" href="#"><i class="fas fa-share me-2"></i>Share</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                            <!-- Rest of the post card remains the same -->
+                            <div class="post-image-container">
+                                <img src="{{post.image.url}}" alt="Post Image" class="post-image">
+                            </div>
+
+                            <div class="post-actions">
+                                <a href="/like-post/{{post.id}}"
+                                    class="post-action-btn {% if post.is_liked %}liked{% endif %}">
+                                    <i class="fa-{% if post.is_liked %}solid{% else %}regular{% endif %} fa-heart"></i>
+                                </a>
+                                <button class="post-action-btn" data-bs-toggle="modal"
+                                    data-bs-target="#commentModal{{post.id}}">
+                                    <i class="fa-regular fa-comment"></i>
+                                </button>
+                                <button class="post-action-btn post-save-btn {% if post.is_saved %}saved{% endif %}"
+                                    data-post-id="{{post.id}}" onclick="savePost('{{post.id}}')">
+                                    <i class="fa-{% if post.is_saved %}solid{% else %}regular{% endif %} fa-bookmark"></i>
+                                </button>
+                            </div>
+
+                            <div class="post-content">
+                                <div class="post-likes">{{ post.no_of_likes }} likes</div>
+
+                                <div class="post-caption">
+                                    <strong>@{{ post.user.user.username }}</strong> {{ post.caption }}
+                                </div>
+
+                                {% if post.no_of_comments > 0 %}
+                                <div class="post-comments" data-bs-toggle="modal"
+                                    data-bs-target="#commentModal{{post.id}}">
+                                    View all {{ post.no_of_comments }} comments
+                                </div>
+                                {% endif %}
+
+                                <div class="post-timestamp">{{ post.created_at|timesince }} ago</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connections Modal -->
+    <div class="modal fade" id="connectionsModal" tabindex="-1" aria-labelledby="connectionsModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="connectionsModalLabel">Connections</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Tabs -->
+                    <ul class="nav nav-tabs mb-3" id="connectionsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all"
+                                type="button" role="tab">
+                                All Connections ({{user_followers}})
+                            </button>
+                        </li>
+                        {% if user != user_object.username %}
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="mutual-tab" data-bs-toggle="tab" data-bs-target="#mutual"
+                                type="button" role="tab">
+                                Mutual Connections ({{mutual_connections|length}})
+                            </button>
+                        </li>
+                        {% endif %}
+                    </ul>
+
+                    <!-- Tab Content -->
+                    <div class="tab-content" id="connectionsTabContent">
+                        <!-- All Connections Tab -->
+                        <div class="tab-pane fade show active" id="all" role="tabpanel">
+                            <div class="connections-list">
+                                {% if user_connections %}
+                                {% for connection in user_connections %}
+                                <div class="connection-item d-flex align-items-center mb-3 p-2 border-bottom">
+                                    {% if connection.profile.profileimg %}
+                                    <img src="{{ connection.profile.profileimg.url }}" alt="{{ connection.username }}"
+                                        class="rounded-circle me-3"
+                                        style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                        style="width: 50px; height: 50px; background-color: #e9ecef; color: #6c757d;">
+                                        <i class="fa-solid fa-user fa-lg"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="connection-info">
+                                        <a href="/profile/{{ connection.username }}"
+                                            class="text-decoration-none text-dark">
+                                            <h6 class="mb-0">@{{ connection.username }}</h6>
+                                        </a>
+                                        <small class="text-muted">{{ connection.email }}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="text-center py-4">
+                                    <p class="text-muted">No connections yet</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Mutual Connections Tab - Only shown when viewing other users' profiles -->
+                        {% if user != user_object.username %}
+                        <div class="tab-pane fade" id="mutual" role="tabpanel">
+                            <div class="connections-list">
+                                {% if mutual_connections %}
+                                {% for connection in mutual_connections %}
+                                <div class="connection-item d-flex align-items-center mb-3 p-2 border-bottom">
+                                    {% if connection.profile.profileimg %}
+                                    <img src="{{ connection.profile.profileimg.url }}" alt="{{ connection.username }}"
+                                        class="rounded-circle me-3"
+                                        style="width: 50px; height: 50px; object-fit: cover;">
+                                    {% else %}
+                                    <div class="rounded-circle me-3 d-flex align-items-center justify-content-center"
+                                        style="width: 50px; height: 50px; background-color: #e9ecef; color: #6c757d;">
+                                        <i class="fa-solid fa-user fa-lg"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div class="connection-info">
+                                        <a href="/profile/{{ connection.username }}"
+                                            class="text-decoration-none text-dark">
+                                            <h6 class="mb-0">@{{ connection.username }}</h6>
+                                        </a>
+                                        <small class="text-muted">{{ connection.email }}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% else %}
+                                <div class="text-center py-4">
+                                    <p class="text-muted">No mutual connections</p>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include "edit_profile.html" %}
+
+    <script src="{% static 'js/app.js'%}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <script>
+        // Search functionality for connections with recommendations
+        const searchConnections = document.getElementById('searchConnections');
+        const suggestionsDropdown = document.createElement('div');
+        suggestionsDropdown.className = 'suggestions-dropdown';
+        searchConnections.parentNode.appendChild(suggestionsDropdown);
+        let debounceTimer;
+
+        searchConnections.addEventListener('input', function () {
+            clearTimeout(debounceTimer);
+            const query = this.value.trim();
+
+            if (query.length >= 2) {
+                debounceTimer = setTimeout(() => {
+                    fetchSuggestions(query);
+                }, 300);
+            } else {
+                suggestionsDropdown.style.display = 'none';
+            }
+        });
+
+        function fetchSuggestions(query) {
+            fetch(`/search-suggestions/?q=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    displaySuggestions(data.suggestions);
+                })
+                .catch(error => {
+                    console.error('Error fetching suggestions:', error);
+                });
+        }
+
+        function displaySuggestions(suggestions) {
+            if (suggestions.length === 0) {
+                suggestionsDropdown.style.display = 'none';
+                return;
+            }
+
+            const html = suggestions.map(suggestion => `
+                <div class="suggestion-item" onclick="window.location.href='/profile/${suggestion.username}'">
+                    <div class="user-info">
+                        <strong>@${suggestion.username}</strong>
+                        <div class="text-muted small">
+                            ${suggestion.email} | ${suggestion.phone}
+                        </div>
+                    </div>
+                    ${suggestion.is_connected ? '<span class="badge bg-success">Connected</span>' :
+                    suggestion.is_similar ? '<span class="badge bg-warning">Similar</span>' : ''}
+                </div>
+            `).join('');
+
+            suggestionsDropdown.innerHTML = html;
+            suggestionsDropdown.style.display = 'block';
+        }
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', function (event) {
+            if (!searchConnections.contains(event.target) && !suggestionsDropdown.contains(event.target)) {
+                suggestionsDropdown.style.display = 'none';
+            }
+        });
+
+        // Like post functionality
+        function likePost(postId) {
+            fetch(`/like-post/${postId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const button = document.querySelector(`button[data-post-id="${postId}"]`);
+                        const icon = button.querySelector('i');
+                        const likesCount = document.querySelector(`#likes-count-${postId}`);
+
+                        if (data.liked) {
+                            button.classList.add('liked');
+                            icon.classList.replace('fa-regular', 'fa-solid');
+                        } else {
+                            button.classList.remove('liked');
+                            icon.classList.replace('fa-solid', 'fa-regular');
+                        }
+
+                        if (likesCount) {
+                            likesCount.textContent = `${data.likes_count} likes`;
+                        }
+                    }
+                });
+        }
+
+        // Save post functionality
+        function savePost(postId) {
+            fetch(`/save-post/${postId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        const button = document.querySelector(`button[data-post-id="${postId}"]`);
+                        const icon = button.querySelector('i');
+
+                        if (data.saved) {
+                            button.classList.add('saved');
+                            icon.classList.replace('fa-regular', 'fa-solid');
+                        } else {
+                            button.classList.remove('saved');
+                            icon.classList.replace('fa-solid', 'fa-regular');
+                        }
+                    }
+                });
+        }
+
+        // Get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    </script>
+</body>
+
+</html>
